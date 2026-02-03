@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3DPrint Optimizer - MVP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-xl font-bold text-blue-600">3DPrint Opti-Cloud</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/admin.html" class="text-gray-500 hover:text-gray-700">Admin Portal</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+        <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Login / Register</h2>
+        
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700">User ID (Email or Phone)</label>
+            <input type="text" id="userIdInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2" placeholder="e.g. user123">
+        </div>
+
+        <button onclick="login()" class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">Enter Dashboard</button>
+        
+        <div class="mt-6 border-t pt-4">
+            <p class="text-sm text-gray-500 text-center mb-4">First time? Verify Enterprise to get <span class="font-bold text-green-600">200 CNY Free Credit</span></p>
+            <button onclick="showVerify()" class="w-full bg-green-50 text-green-700 py-2 px-4 rounded border border-green-200 hover:bg-green-100 transition">Apply for Enterprise Verification</button>
+        </div>
+    </div>
+
+    <!-- Verification Modal -->
+    <div id="verifyModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Enterprise Verification</h3>
+                <div class="mt-2 px-7 py-3">
+                    <input type="text" id="v_userId" placeholder="Your User ID" class="mb-3 w-full border p-2 rounded">
+                    <input type="text" id="v_company" placeholder="Company Name" class="mb-3 w-full border p-2 rounded">
+                    <input type="text" id="v_code" placeholder="Unified Social Credit Code (18 chars)" class="mb-3 w-full border p-2 rounded">
+                    <input type="text" id="v_img" placeholder="License Image URL (Mock URL)" class="mb-3 w-full border p-2 rounded" value="https://example.com/license.jpg">
+                    <p class="text-xs text-gray-500 text-left">Note: For MVP, Image URL is not validated.</p>
+                </div>
+                <div class="items-center px-4 py-3">
+                    <button id="ok-btn" onclick="submitVerify()" class="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                        Submit Application
+                    </button>
+                    <button onclick="hideVerify()" class="mt-3 px-4 py-2 bg-gray-100 text-gray-700 text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-200">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function login() {
+            const uid = document.getElementById('userIdInput').value;
+            if(!uid) return alert('Please enter User ID');
+            localStorage.setItem('currentUser', uid);
+            window.location.href = '/dashboard.html';
+        }
+
+        function showVerify() {
+            document.getElementById('verifyModal').classList.remove('hidden');
+            document.getElementById('v_userId').value = document.getElementById('userIdInput').value;
+        }
+
+        function hideVerify() {
+            document.getElementById('verifyModal').classList.add('hidden');
+        }
+
+        async function submitVerify() {
+            const data = {
+                user_id: document.getElementById('v_userId').value,
+                company_name: document.getElementById('v_company').value,
+                credit_code: document.getElementById('v_code').value,
+                license_image_url: document.getElementById('v_img').value
+            };
+
+            try {
+                const res = await fetch('/api/auth/enterprise', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const json = await res.json();
+                if(json.success) {
+                    alert('Submitted! Waiting for admin review.');
+                    hideVerify();
+                } else {
+                    alert('Error: ' + json.message);
+                }
+            } catch(e) {
+                alert('Network error');
+            }
+        }
+    </script>
+</body>
+</html>
