@@ -6,6 +6,7 @@ import { TaskFetch } from "./endpoints/taskFetch";
 import { TaskList } from "./endpoints/taskList";
 import { AuthSubmit } from "./endpoints/authSubmit";
 import { AuthReview } from "./endpoints/authReview";
+import { AuthList } from "./endpoints/authList";
 import { UserBalance } from "./endpoints/userBalance";
 import { OptimizeRun } from "./endpoints/optimizeRun";
 
@@ -25,6 +26,7 @@ openapi.delete("/api/tasks/:taskSlug", TaskDelete);
 
 // New Enterprise Auth & Billing Endpoints
 openapi.post("/api/auth/enterprise", AuthSubmit);
+openapi.get("/api/admin/auth/pending", AuthList);
 openapi.post("/api/admin/auth/review", AuthReview);
 openapi.get("/api/users/:user_id/balance", UserBalance);
 openapi.post("/api/service/optimize", OptimizeRun);
