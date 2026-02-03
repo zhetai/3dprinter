@@ -1,0 +1,36 @@
+import { fromHono } from "chanfana";
+import { Hono } from "hono";
+import { TaskCreate } from "./endpoints/taskCreate";
+import { TaskDelete } from "./endpoints/taskDelete";
+import { TaskFetch } from "./endpoints/taskFetch";
+import { TaskList } from "./endpoints/taskList";
+import { AuthSubmit } from "./endpoints/authSubmit";
+import { AuthReview } from "./endpoints/authReview";
+import { UserBalance } from "./endpoints/userBalance";
+import { OptimizeRun } from "./endpoints/optimizeRun";
+
+// Start a Hono app
+const app = new Hono<{ Bindings: Env }>();
+
+// Setup OpenAPI registry
+const openapi = fromHono(app, {
+	docs_url: "/",
+});
+
+// Register OpenAPI endpoints
+openapi.get("/api/tasks", TaskList);
+openapi.post("/api/tasks", TaskCreate);
+openapi.get("/api/tasks/:taskSlug", TaskFetch);
+openapi.delete("/api/tasks/:taskSlug", TaskDelete);
+
+// New Enterprise Auth & Billing Endpoints
+openapi.post("/api/auth/enterprise", AuthSubmit);
+openapi.post("/api/admin/auth/review", AuthReview);
+openapi.get("/api/users/:user_id/balance", UserBalance);
+openapi.post("/api/service/optimize", OptimizeRun);
+
+// You may also register routes for non OpenAPI directly on Hono
+// app.get('/test', (c) => c.text('Hono!'))
+
+// Export the Hono app
+export default app;
