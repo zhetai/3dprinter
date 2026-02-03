@@ -38,11 +38,16 @@
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
 	 */
 	// "services": [  {   "binding": "MY_SERVICE",   "service": "my-service"  } ],
+	/**
+	 * D1 Database Binding
+	 * Using existing zhetai_users database (c53e87ac-fc71-43d8-ab96-8b686dbd93b4)
+	 * Note: If you need a dedicated database, delete an unused one first
+	 */
 	"d1_databases": [
 		{
 			"binding": "DB",
-			"database_name": "3dprinter-db",
-			"database_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+			"database_name": "zhetai_users",
+			"database_id": "c53e87ac-fc71-43d8-ab96-8b686dbd93b4"
 		}
 	]
 }
